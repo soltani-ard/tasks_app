@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:tasks_app/app/data/services/storage/services.dart';
+import 'package:tasks_app/app/modules/home/binding.dart';
 import 'package:tasks_app/app/modules/home/view.dart';
 
 void main() async{
@@ -38,6 +40,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
+      initialBinding: HomeBinding(),
+      builder: EasyLoading.init(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

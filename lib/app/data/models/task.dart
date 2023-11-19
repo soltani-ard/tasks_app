@@ -10,7 +10,7 @@ class Task extends Equatable {
       {required this.title,
       required this.icon,
       required this.color,
-      required this.todos});
+      this.todos});
 
   Task copyWith({
     String? title,
