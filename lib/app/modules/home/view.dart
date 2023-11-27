@@ -57,9 +57,16 @@ class HomePage extends GetView<HomeController> {
       floatingActionButton: DragTarget<Task>(
         builder: (_, __, ___) {
           return Obx(
-                () => FloatingActionButton(
-              onPressed: () => Get.to(()=> AddDialog(), transition: Transition.downToUp),
-              backgroundColor: controller.deleting.value ? Colors.red : Colors.blue,
+            () => FloatingActionButton(
+              onPressed: () {
+                if (controller.tasks.value.isNotEmpty) { // there must be at least one task
+                  Get.to(() => AddDialog(), transition: Transition.downToUp);
+                } else { // task type not exist
+                  EasyLoading.showInfo('Please create your task type.');
+                }
+              },
+              backgroundColor:
+                  controller.deleting.value ? Colors.red : Colors.blue,
               child: Icon(
                 controller.deleting.value ? Icons.delete_forever : Icons.add,
                 color: Colors.white,
@@ -67,7 +74,7 @@ class HomePage extends GetView<HomeController> {
             ),
           );
         },
-        onAccept: (Task task){
+        onAccept: (Task task) {
           controller.deleteTask(task);
           EasyLoading.showSuccess('Delete Success!');
         },

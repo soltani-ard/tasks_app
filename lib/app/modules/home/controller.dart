@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:tasks_app/app/data/models/task.dart';
 import 'package:tasks_app/app/data/services/storage/repository.dart';
@@ -14,6 +15,8 @@ class HomeController extends GetxController {
   final deleting = false.obs;
   final chipIndex = 0.obs;
   final task = Rx<Task?>(null);
+  final doingTodos = <dynamic>[].obs;
+  final doneTodos = <dynamic>[].obs;
 
   @override
   void onInit() {
@@ -78,5 +81,78 @@ class HomeController extends GetxController {
 
   bool containsTodo(List todos, String title) {
     return todos.any((element) => element['title'] == title);
+  }
+
+  void changeTodos(List<dynamic> select) {
+    // reset todos list
+    doingTodos.clear();
+    doneTodos.clear();
+
+    // for all todos
+    for (int i = 0; i < select.length; i++) {
+      var todo = select[i];
+      var status = todo['done'];
+      if (status == true) {
+        // check todo completed or doing
+        doneTodos.add(todo);
+      } else {
+        doingTodos.add(todo);
+      }
+    }
+  }
+
+  bool addTodo(String title) {
+    // check new todo already exist in doingTodos or not
+    var todo = {'title': title, 'done': false};
+    if (doingTodos
+        .any((element) => mapEquals<String, dynamic>(todo, element))) {
+      return false;
+    }
+
+    // check new todo already exist in doneTodos or not
+    var doneTodo = {'title': title, 'done': true};
+    if (doneTodos
+        .any((element) => mapEquals<String, dynamic>(doneTodo, element))) {
+      return false;
+    }
+
+    // can be added
+    doingTodos.add(todo);
+    return true;
+  }
+
+  void updateTodos() {
+    // create all todos list(doing & completed)
+    var newTodos = <Map<String, dynamic>>[];
+    newTodos.addAll([
+      ...doingTodos,
+      ...doneTodos,
+    ]);
+
+    // update todos list in task
+    var newTask = task.value!.copyWith(
+      todos: newTodos,
+    );
+
+    int oldIndex = tasks.indexOf(task.value);
+    tasks[oldIndex] = newTask;
+
+    tasks.refresh();
+  }
+
+  void doneTodo(String title) {
+    // remove todo from doing list (todo is completed)
+    var doingTodo = {'title': title, 'done': false};
+    int index = doingTodos.indexWhere(
+        (element) => mapEquals<String, dynamic>(doingTodo, element));
+    doingTodos.removeAt(index);
+
+    // after delete, added todo to done list
+    var doneTodo = {'title': title, 'done': true};
+    doneTodos.add(doneTodo);
+
+    // refresh lists
+    doingTodos.refresh();
+    doneTodos.refresh();
   }
 }
