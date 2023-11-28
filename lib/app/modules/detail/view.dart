@@ -143,7 +143,7 @@ class DetailPage extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 16.0.wp,),
+          SizedBox(height: 3.0.wp,),
           DoingList(),
           DoneList(),
         ],

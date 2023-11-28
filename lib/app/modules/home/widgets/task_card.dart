@@ -37,8 +37,8 @@ class TaskCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             StepProgressIndicator(
-              totalSteps: 100,
-              currentStep: 70,
+              totalSteps: homeCtrl.isTodosEmpty(task) ? 1 : task.todos!.length,
+              currentStep: homeCtrl.getDoneTodosNumber(task),
               size: 5,
               padding: 0,
               selectedGradientColor: LinearGradient(
