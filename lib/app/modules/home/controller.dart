@@ -17,6 +17,7 @@ class HomeController extends GetxController {
   final task = Rx<Task?>(null);
   final doingTodos = <dynamic>[].obs;
   final doneTodos = <dynamic>[].obs;
+  final tabIndex = 0.obs;
 
   @override
   void onInit() {
@@ -170,11 +171,48 @@ class HomeController extends GetxController {
     return task.todos == null || task.todos!.isEmpty;
   }
 
+  // all [completed] todos in special task
   int getDoneTodosNumber(Task task) {
     var count = 0;
     for (int i = 0; i < task.todos!.length; i++) {
       if (task.todos![i]['done'] == true) count += 1;
     }
     return count;
+  }
+
+  // all todos [doing and completed] in all tasks
+  int getTotalTodosNumber() {
+    var count = 0;
+    for (int i = 0; i < tasks.length; i++) {
+      // for all tasks
+      if (tasks[i].todos != null) {
+        // task have todo
+        count = tasks[i].todos!.length; // all todos item exist in task
+      }
+    }
+    return count;
+  }
+
+  // all todos [completed] in all tasks
+  int getTotalDoneTaskNumber() {
+    var count = 0;
+    for (int i = 0; i < tasks.length; i++) {
+      // for all tasks
+      if (tasks[i].todos != null) {
+        // task have todo
+        for (int j = 0; j < tasks[i].todos!.length; j++) {
+          // for all todos in task
+          if (tasks[i].todos![j]['done'] == true) {
+            // check todos is completed
+            count += 1;
+          }
+        }
+      }
+    }
+    return count;
+  }
+
+  void changeTabIndex(int index) {
+    tabIndex.value = index;
   }
 }
